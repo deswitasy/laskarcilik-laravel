@@ -97,6 +97,19 @@ class CatatanController extends Controller
             'semester' => 'required|integer|min:1|max:2',
             'tahun_ajaran' => 'required|string',
             'foto.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+
+            // VALIDASI DESKRIPSI
+            'deskripsi_agama' => 'required|string',
+            'deskripsi_jatidiri' => 'required|string',
+            'deskripsi_stem' => 'required|string',
+            'deskripsi_pancasila' => 'required|string',
+        ], [
+            // Custom error messages
+            'deskripsi_agama.required' => 'Isi deskripsi Nilai Agama dan Budi Pekerti terlebih dahulu',
+            'deskripsi_jatidiri.required' => 'Isi deskripsi Nilai Jati Diri terlebih dahulu',
+            'deskripsi_stem.required' => 'Isi deskripsi Nilai STEM terlebih dahulu',
+            'deskripsi_pancasila.required' => 'Isi deskripsi Nilai Pancasila terlebih dahulu',
+
         ]);
 
         try {
@@ -124,6 +137,22 @@ class CatatanController extends Controller
                     ]);
                 }
             }
+
+            
+            // Simpan foto jika ada
+            if ($request->hasFile('foto')) {
+                foreach ($request->file('foto') as $file) {
+                    $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    $filepath = $file->storeAs('catatan/' . $catatan->id_catatan, $filename, 'public');
+
+                    Foto::create([
+                        'id_catatan' => $catatan->id_catatan,
+                        'file_path' => $filepath,
+                        'keterangan' => $request->input('keterangan_foto') ?? null
+                    ]);
+                }
+            }
+
             // Simpan foto jika ada
         if ($request->hasFile('foto')) {
             foreach ($request->file('foto') as $file) {
@@ -137,6 +166,7 @@ class CatatanController extends Controller
                 ]);
             }
         }
+
 
             DB::commit();
 
@@ -166,10 +196,17 @@ class CatatanController extends Controller
     public function edit($id)
     {
         $catatan = CatatanPerkembangan::with([
+
+            'detailCatatan.kategori',
+            'foto'
+        ])->where('id_user', Auth::id())
+            ->findOrFail($id);
+
         'detailCatatan.kategori',
         'foto'
     ])->where('id_user', Auth::id())
         ->findOrFail($id);
+
 
         $siswa = Siswa::where('status_siswa', 'aktif')
             ->with('kelas')
@@ -189,6 +226,19 @@ class CatatanController extends Controller
             'semester' => 'required|integer|min:1|max:2',
             'tahun_ajaran' => 'required|string',
             'foto.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+
+            // VALIDASI DESKRIPSI
+            'deskripsi_agama' => 'required|string',
+            'deskripsi_jatidiri' => 'required|string',
+            'deskripsi_stem' => 'required|string',
+            'deskripsi_pancasila' => 'required|string',
+        ], [
+            // Custom error messages
+            'deskripsi_agama.required' => 'Isi deskripsi Nilai Agama dan Budi Pekerti terlebih dahulu',
+            'deskripsi_jatidiri.required' => 'Isi deskripsi Nilai Jati Diri terlebih dahulu',
+            'deskripsi_stem.required' => 'Isi deskripsi Nilai STEM terlebih dahulu',
+            'deskripsi_pancasila.required' => 'Isi deskripsi Nilai Pancasila terlebih dahulu',
+
         ]);
 
         try {
@@ -220,6 +270,31 @@ class CatatanController extends Controller
                     ]);
                 }
             }
+
+            
+            // Hapus foto yang dipilih
+            if ($request->has('hapus_foto')) {
+                foreach ($request->input('hapus_foto') as $id_foto) {
+                    $foto = Foto::findOrFail($id_foto);
+                    Storage::disk('public')->delete($foto->file_path);
+                    $foto->delete();
+                }
+            }
+            
+            // Simpan foto baru
+            if ($request->hasFile('foto')) {
+                foreach ($request->file('foto') as $file) {
+                    $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    $filepath = $file->storeAs('catatan/' . $catatan->id_catatan, $filename, 'public');
+
+                    Foto::create([
+                        'id_catatan' => $catatan->id_catatan,
+                        'file_path' => $filepath,
+                        'keterangan' => $request->input('keterangan_foto') ?? null
+                    ]);
+                }
+            }
+
             if ($request->has('hapus_foto')) {
             foreach ($request->input('hapus_foto') as $id_foto) {
                 $foto = Foto::findOrFail($id_foto);
@@ -240,6 +315,7 @@ class CatatanController extends Controller
                 ]);
             }
         }
+
 
             DB::commit();
 
@@ -300,6 +376,38 @@ class CatatanController extends Controller
 
         return $mapping[$kategoriName] ?? strtolower(str_replace(' ', '_', $kategoriName));
     }
+
+    
+    // Index Catatan untuk halaman /guru/catatan
+    public function indexCatatan(Request $request)
+    {
+        $query = CatatanPerkembangan::with(['siswa.kelas', 'user'])
+            ->where('id_user', Auth::id());
+
+        // Search nama siswa
+        if ($request->filled('search')) {
+            $query->whereHas('siswa', function ($q) use ($request) {
+                $q->where('nama_siswa', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        // Filter tanggal
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('tanggal_catat', [
+                $request->start_date,
+                $request->end_date
+            ]);
+        }
+
+        $catatan = $query
+            ->orderBy('tanggal_catat', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('guru.catatan.index', compact('catatan'));
+    }
+}
+
     // Index Catatan untuk halaman /guru/catatan
 public function indexCatatan(Request $request)
 {
@@ -330,3 +438,4 @@ public function indexCatatan(Request $request)
 }
 
 }
+
