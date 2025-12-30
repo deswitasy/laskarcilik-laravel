@@ -98,8 +98,6 @@ class CatatanController extends Controller
             'tahun_ajaran' => 'required|string',
             'foto.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
 
-
-
             // VALIDASI DESKRIPSI
             'deskripsi_agama' => 'required|string',
             'deskripsi_jatidiri' => 'required|string',
@@ -111,7 +109,6 @@ class CatatanController extends Controller
             'deskripsi_jatidiri.required' => 'Isi deskripsi Nilai Jati Diri terlebih dahulu',
             'deskripsi_stem.required' => 'Isi deskripsi Nilai STEM terlebih dahulu',
             'deskripsi_pancasila.required' => 'Isi deskripsi Nilai Pancasila terlebih dahulu',
-
 
         ]);
 
@@ -141,8 +138,6 @@ class CatatanController extends Controller
                 }
             }
 
-
-
             // Simpan foto jika ada
             if ($request->hasFile('foto')) {
                 foreach ($request->file('foto') as $file) {
@@ -157,7 +152,6 @@ class CatatanController extends Controller
                 }
             }
 
-
             // Simpan foto jika ada
         if ($request->hasFile('foto')) {
             foreach ($request->file('foto') as $file) {
@@ -171,8 +165,6 @@ class CatatanController extends Controller
                 ]);
             }
         }
-
-
 
             DB::commit();
 
@@ -203,8 +195,6 @@ class CatatanController extends Controller
     {
         $catatan = CatatanPerkembangan::with([
 
-
-
             'detailCatatan.kategori',
             'foto'
         ])->where('id_user', Auth::id())
@@ -215,8 +205,6 @@ class CatatanController extends Controller
         'foto'
     ])->where('id_user', Auth::id())
         ->findOrFail($id);
-
-
 
         $siswa = Siswa::where('status_siswa', 'aktif')
             ->with('kelas')
@@ -304,6 +292,7 @@ class CatatanController extends Controller
                     ]);
                 }
             }
+
 
 
             if ($request->has('hapus_foto')) {
@@ -417,6 +406,9 @@ class CatatanController extends Controller
 
         return view('guru.catatan.index', compact('catatan'));
     }
+
+}
+
 
 }
 

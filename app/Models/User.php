@@ -43,4 +43,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(CatatanPerkembangan::class, 'id_user', 'id_user');
     }
+
 }
+
+}
+
+}
+
