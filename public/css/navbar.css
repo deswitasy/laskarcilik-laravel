@@ -1,0 +1,56 @@
+/* HEADER */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background: #ffffff;
+    padding: 16px 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+
+    margin-bottom: 20px;
+}
+
+/* JUDUL */
+.page-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+/* BAGIAN KANAN */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* LOGOUT BUTTON */
+.logout-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #2563eb;
+    padding: 6px;
+}
+
+.logout-button:hover {
+    color: #1e40af;
+}
+
+/* AVATAR */
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #2563eb;
+    color: #fff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: 600;
+}
