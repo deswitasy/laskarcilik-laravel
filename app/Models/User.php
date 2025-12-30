@@ -43,8 +43,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(CatatanPerkembangan::class, 'id_user', 'id_user');
     }
-<<<<<<< HEAD
+
 }
-=======
+
 }
->>>>>>> c21352687f1e928f2adffa8a0881c38aa3e31a2d
+
+}
+
