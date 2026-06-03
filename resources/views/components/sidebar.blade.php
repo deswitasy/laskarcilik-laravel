@@ -1,6 +1,7 @@
 <div class="sidebar-wrapper">
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
+            <img src="{{ asset('assets/logo laskar cilik.png') }}" alt="Logo Laskar Cilik" style="width: 80px;">
             <h2>Laskar<br />Cilik</h2>
         </div>
         

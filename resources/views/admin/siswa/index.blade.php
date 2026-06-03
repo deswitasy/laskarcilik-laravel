@@ -107,8 +107,9 @@
 </div>
 
 <!-- Pagination -->
-<div class="pagination">
-    {{ $siswa->links() }}
+<div style="margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+    {{ $siswa->links('vendor.pagination.custom') }}
+    <small style="color: #666;">Showing {{ $siswa->firstItem() }} to {{ $siswa->lastItem() }} of {{ $siswa->total() }} results</small>
 </div>
 @endsection
 
@@ -166,6 +167,37 @@ document.querySelectorAll('.btn-delete-siswa').forEach(button => {
     .badge-secondary {
         background: #6c757d;
         color: white;
+    }
+
+    .pagination {
+        display: flex;
+        list-style: none !important;
+        gap: 5px;
+        padding: 0;
+        margin: 0;
+        justify-content: center;
+    }
+    .pagination li a,
+    .pagination li span {
+        display: inline-block;
+        padding: 6px 14px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        color: #333;
+        text-decoration: none;
+        font-size: 14px;
+        background: white;
+    }
+    .pagination li.active span {
+        background: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+    .pagination li a:hover {
+        background: #e9ecef;
+    }
+    .pagination li.disabled span {
+        color: #aaa;
     }
 </style>
 @endpush

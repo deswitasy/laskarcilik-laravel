@@ -133,7 +133,7 @@ body {
 .form-group textarea { resize: vertical; min-height: 80px; }
 .form-group textarea::placeholder { color: #9ca3af; }
 
-.form-group-pair { display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+.form-group-pair { display: block; margin-bottom: 1.5rem; }
 .form-actions { display: flex; justify-content: flex-end; margin-top: 2rem; }
 
 .btn-submit {

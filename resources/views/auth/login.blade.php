@@ -15,6 +15,7 @@
 
     <div class="kanan-section">
       <div class="login-kanan">
+        <img src="{{ asset('assets/logo laskar cilik.png') }}" alt="Logo" style="width: 100px; margin-bottom: 10px;">
         <h2 class="brand">LaskarCilik</h2>
         
        @if(session('logout'))

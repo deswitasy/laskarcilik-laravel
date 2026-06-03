@@ -59,7 +59,7 @@
                     name="deskripsi_{{ $fieldName }}" 
                     id="deskripsi_{{ $fieldName }}"
                     class="@error('deskripsi_' . $fieldName) is-invalid @enderror"
-                    rows="3" 
+                    rows="6"
                     placeholder="Deskripsi {{ strtolower($kat->nama_kategori) }}..."
                 >{{ old('deskripsi_' . $fieldName) }}</textarea>
                 @error('deskripsi_' . $fieldName)
@@ -219,6 +219,12 @@ document.getElementById('foto').addEventListener('change', function(e) {
     margin-top: 5px;
 }
 
+textarea {
+    resize: vertical;
+    min-height: 120px;
+    width: 100%;
+}
+
 .btn-cancel {
     padding: 10px 20px;
     background: #6c757d;
@@ -344,6 +350,18 @@ document.getElementById('foto').addEventListener('change', function(e) {
 
 .animate-shake {
     animation: shake 0.6s;
+}
+
+.content-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.form-container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 @media (max-width: 768px) {
