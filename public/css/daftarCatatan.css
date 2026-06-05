@@ -344,6 +344,51 @@ tbody tr:hover {
   transform: translateY(-1px);
 }
 
+/* Pagination */
+.custom-pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.custom-pagination ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 4px;
+}
+
+.custom-pagination li a,
+.custom-pagination li span {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    text-decoration: none;
+    border: 1px solid #d1d5db;
+    background-color: #ffffff;
+    color: #2563eb;
+}
+
+.custom-pagination li.active span {
+    background-color: #0277bd;
+    color: #ffffff;
+    border-color: #0277bd;
+    font-weight: 600;
+}
+
+.custom-pagination li.disabled span {
+    background-color: #f3f4f6;
+    color: #9ca3af;
+    cursor: not-allowed;
+    border-color: #e5e7eb;
+}
+
+.custom-pagination li a:hover {
+    background-color: #e3f2fd;
+}
+
 @media (max-width: 768px) {
   .sidebar {
     width: 200px;
