@@ -99,8 +99,8 @@
 </div>
 
 <!-- Pagination -->
-<div class="pagination">
-    {{ $catatan->links() }}
+<div>
+    {{ $catatan->links('vendor.pagination.custom') }}
 </div>
 @endsection
 
