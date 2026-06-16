@@ -88,8 +88,8 @@
 <div class="recent-section">
     <div class="section-header">
         <h2>Catatan Terbaru Saya</h2>
-        <a href="{{ route('guru.catatan.create') }}" class="btn-add-small">
-            ➕ Tambah Catatan
+        <a href="{{ route('guru.catatan.create') }}" class="add-button">
+        <i class="fa-solid fa-plus"></i> Tambah Catatan
         </a>
     </div>
     
@@ -118,10 +118,10 @@
                     <td>
                         <div class="action-buttons">
                             <a href="{{ route('guru.catatan.show', $catatan->id_catatan) }}" class="btn btn-detail">
-                                ⓘ Detail
+                                <i class="fa-solid fa-eye"></i> Detail
                             </a>
                             <a href="{{ route('guru.catatan.edit', $catatan->id_catatan) }}" class="btn btn-edit">
-                                ✏️ Edit
+                                <i class="fa-solid fa-pen-to-square"></i> Edit
                             </a>
                         </div>
                     </td>
@@ -251,7 +251,7 @@ new Chart(document.getElementById('chartCatatanMingguan'), {
         labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum'],
         datasets: [{
             data: catatanMingguan,
-            backgroundColor: '#36A2EB',
+            backgroundColor: '#C9F99C',
             borderRadius: 6
         }]
     },
@@ -266,7 +266,7 @@ new Chart(document.getElementById('chartPerkembanganSiswa'), {
         datasets: [{
             label: 'Jumlah Siswa',
             data: dataSiswa,
-            borderColor: '#36A2EB',
+            borderColor: '#C69EF1',
             fill: true,
             tension: 0.4
         }]
@@ -296,7 +296,7 @@ new Chart(document.getElementById('chartGenderSiswa'), {
     type: 'doughnut',
     data: {
         labels: ['Laki-laki', 'Perempuan'],
-        datasets: [{ data: genderData, backgroundColor: ['#36A2EB', '#FF6384'] }]
+        datasets: [{ data: genderData, backgroundColor: ['#94D9FF', '#F09AA8'] }]
     }
 });
 
@@ -305,7 +305,7 @@ new Chart(document.getElementById('chartKategori'), {
     type: 'pie',
     data: {
         labels: ['Agama', 'Jati Diri', 'STEM', 'Pancasila'],
-        datasets: [{ data: kategoriData }]
+        datasets: [{ data: kategoriData, backgroundColor: ['#94D9FF', '#F09AA8', '#C69EF1', '#C9F99C'] }]
     }
 });
 </script>

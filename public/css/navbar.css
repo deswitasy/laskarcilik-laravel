@@ -1,56 +1,61 @@
-/* HEADER */
+
 .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    background: #ffffff;
-    padding: 16px 24px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-
-    margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  padding: 14px 22px;
+  border-radius: 16px;
+  box-shadow: 0 1px 4px rgba(108,99,255,0.07), 0 0 0 1px #ECEEF8;
+  margin-bottom: 22px;
 }
 
-/* JUDUL */
+/* Title: font Nunito medium-weight, warna selaras tema */
 .page-title {
-    font-size: 22px;
-    font-weight: 600;
-    color: #1f2937;
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: #2D3142;
+  letter-spacing: -0.3px;
 }
 
-/* BAGIAN KANAN */
 .header-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-/* LOGOUT BUTTON */
 .logout-button {
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    color: #2563eb;
-    padding: 6px;
+  width: 36px;
+  height: 36px;
+  background: #FFF0F0;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  color: #FF6B6B;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s, transform 0.15s;
 }
-
 .logout-button:hover {
-    color: #1e40af;
+  background: #FF6B6B;
+  color: #ffffff;
+  transform: scale(1.06);
 }
 
-/* AVATAR */
 .avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: #2563eb;
-    color: #fff;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-weight: 600;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6C63FF, #9B89FF);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 14px;
+  box-shadow: 0 3px 10px rgba(108,99,255,0.28);
 }

@@ -1,44 +1,37 @@
 @extends('layouts.admin')
-
 @section('title', 'Akun Guru')
 @section('page-title', 'Kelola Akun Guru')
 
 @section('content')
-<!-- Controls -->
 <div class="controls">
     <a href="{{ route('admin.guru.create') }}" class="add-button">
-        ➕ Tambah Guru
+        <i class="fa-solid fa-plus"></i> Tambah Guru
     </a>
 
     <div class="filter-section">
         <form method="GET" action="{{ route('admin.guru.index') }}">
             <select name="status" onchange="this.form.submit()">
                 <option value="">Semua Status</option>
-                <option value="aktif" {{ request('status') == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                <option value="aktif"    {{ request('status') == 'aktif'    ? 'selected' : '' }}>Aktif</option>
                 <option value="nonaktif" {{ request('status') == 'nonaktif' ? 'selected' : '' }}>Non-Aktif</option>
             </select>
 
-            <input
-                type="text"
-                name="search"
-                class="search-input"
-                placeholder="🔍 Cari nama/username/email..."
-                value="{{ request('search') }}">
+            <input type="text" name="search" class="search-input"
+                placeholder="Cari nama / username / email..." value="{{ request('search') }}">
 
             <button type="submit" class="filter-button">
-                <span>🔍</span> Filter
+                <i class="fa-solid fa-magnifying-glass"></i> Filter
             </button>
 
             @if(request()->hasAny(['search', 'status']))
             <a href="{{ route('admin.guru.index') }}" class="clear-filter-button">
-                Clear Filter
+                <i class="fa-solid fa-xmark"></i> Reset
             </a>
             @endif
         </form>
     </div>
 </div>
 
-<!-- Table -->
 <div class="table-container">
     <table>
         <thead>
@@ -67,26 +60,21 @@
                 </td>
                 <td>
                     <div class="action-buttons">
-                        <a href="{{ route('admin.guru.show', $g->id_user) }}" class="btn btn-detail">
-                            ⓘ Detail
+                        <a href="{{ route('admin.guru.show', $g->id_user) }}"
+                           class="btn-detail" title="Lihat Detail">
+                            <i class="fa-solid fa-eye"></i>
                         </a>
-                        <a href="{{ route('admin.guru.edit', $g->id_user) }}" class="btn btn-edit">
-                            ✏️ Edit
+                        <a href="{{ route('admin.guru.edit', $g->id_user) }}"
+                           class="btn-edit" title="Edit">
+                            <i class="fa-solid fa-pen-to-square"></i>
                         </a>
-                        <!-- <button
-                            type="button"
-                            class="btn btn-delete btn-delete-siswa"
-                            data-url="{{ route('admin.guru.destroy', $g) }}"
-
-                            data-nama="{{ $g->nama_user }}">
-                            🗑️ Hapus
-                        </button> -->
                     </div>
                 </td>
             </tr>
             @empty
             <tr>
-                <td colspan="7" style="text-align: center; padding: 30px; color: #999;">
+                <td colspan="7" class="empty-state">
+                    <i class="fa-solid fa-inbox" style="font-size:24px; display:block; margin-bottom:8px; opacity:.4;"></i>
                     Tidak ada data guru
                 </td>
             </tr>
@@ -95,36 +83,29 @@
     </table>
 </div>
 
-<!-- Pagination -->
-<div class="pagination">
+<div style="margin-top:18px; display:flex; justify-content:center;">
     {{ $guru->links() }}
 </div>
 @endsection
 
 @push('scripts')
 <script>
-    function confirmDelete(url, nama) {
-        if (confirm(`Apakah Anda yakin ingin menghapus akun guru "${nama}"?`)) {
-            fetch(url, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'Accept': 'application/json',
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert(data.message);
-                        location.reload();
-                    } else {
-                        alert('Gagal menghapus: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    alert('Terjadi kesalahan: ' + error);
-                });
-        }
+function confirmDelete(url, nama) {
+    if (confirm(`Hapus akun guru "${nama}"?`)) {
+        fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json',
+            }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) { location.reload(); }
+            else { alert('Gagal: ' + data.message); }
+        })
+        .catch(err => alert('Terjadi kesalahan: ' + err));
     }
+}
 </script>
 @endpush
