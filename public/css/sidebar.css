@@ -1,43 +1,65 @@
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 260px;
-    height: 100vh;
-    background: #fff;
-    z-index: 1000;
+/* ============================================================
+   sidebar.css — Laskar Cilik
+   ============================================================ */
+
+/* ── Tombol ≡ tampil di semua ukuran layar ──────────────────
+   app-redesign.css set display:none secara default untuk desktop.
+   Override di sini agar selalu tampil.                        */
+.sidebar-toggle-btn {
+    display: flex !important;
+}
+
+/* ── Transisi halus global ──────────────────────────────────  */
+.sidebar-wrapper {
     transition: transform 0.3s ease;
 }
 
-.sidebar.closed {
-    transform: translateX(-100%);
-}
-
 .main-content {
-    margin-left: 260px;
-    padding: 20px;
     transition: margin-left 0.3s ease;
 }
 
-.main-content.full {
-    margin-left: 0;
+/* ── DESKTOP ONLY: sidebar collapse ─────────────────────────
+   Dibatasi min-width:769px agar tidak konflik dengan
+   sistem mobile (.sidebar-wrapper.open) di app-redesign.css  */
+@media (min-width: 769px) {
+    body.sidebar-collapsed .sidebar-wrapper {
+        transform: translateX(-260px);
+    }
+
+    body.sidebar-collapsed .main-content {
+        margin-left: 0 !important;
+    }
 }
 
-.sidebar-tab {
-    position: fixed;
-    top: 45%;
-    left: 0;
-    background: #6EC1E4;
-    color: white;
-    padding: 10px 8px;
-    border-radius: 0 10px 10px 0;
-    cursor: pointer;
-    display: none;
-    z-index: 1100;
-}
+/* ── MOBILE: backdrop gelap saat sidebar .open ──────────────  */
+@media (max-width: 768px) {
+    /* Pastikan body.sidebar-collapsed tidak mengganggu mobile */
+    body.sidebar-collapsed .sidebar-wrapper {
+        transform: none;
+    }
 
-.sidebar-tab.show {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    body.sidebar-collapsed .main-content {
+        margin-left: 0;
+    }
+
+    /* Backdrop */
+    .sidebar-wrapper.open::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: rgba(20, 20, 40, 0.40);
+        z-index: 99;
+        pointer-events: auto;
+    }
+
+    /* Sidebar di atas backdrop */
+    .sidebar-wrapper .sidebar {
+        position: relative;
+        z-index: 100;
+    }
+
+    /* Saat open, paksa transform ke 0 supapun kondisi body */
+    .sidebar-wrapper.open {
+        transform: translateX(0) !important;
+    }
 }

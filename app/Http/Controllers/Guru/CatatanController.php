@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Foto;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class CatatanController extends Controller
 {
@@ -298,21 +299,38 @@ class CatatanController extends Controller
     }
 
     // Cetak PDF
-    public function cetakPDF($id)
-    {
-        $catatan = CatatanPerkembangan::with([
-            'siswa.kelas',
-            'user',
-            'detailCatatan.kategori'
-        ])->where('id_user', Auth::id())
-            ->findOrFail($id);
+public function cetakPDF($id)
+{
+    // Catatan: Jika Admin ingin mencetak, hapus atau modifikasi where('id_user', Auth::id())
+    $catatan = CatatanPerkembangan::with([
+        'siswa.kelas',
+        'user',
+        'detailCatatan.kategori',
+        'foto',
+    ])->findOrFail($id);
 
-        $pdf = Pdf::loadView('guru.catatan.pdf', compact('catatan'));
+    // Opsional: Keamanan tambahan, pastikan user yang login adalah pemilik atau admin
+    // if ($catatan->id_user !== Auth::id() && !Auth::user()->isAdmin()) {
+    //     abort(403);
+    // }
 
-        $filename = 'Laporan_' . $catatan->siswa->nama_siswa . '_' . date('Y-m-d') . '.pdf';
+    $pdf = Pdf::loadView('guru.catatan.pdf', compact('catatan'))
+        ->setPaper('a4', 'portrait')
+        ->setOptions([
+            'isHtml5ParserEnabled'    => true,
+            'isRemoteEnabled'         => true,
+            'defaultFont'             => 'DejaVu Sans',
+            'isFontSubsettingEnabled' => true,
+            'dpi'                     => 96,
+            'isPhpEnabled'            => false, // Keamanan: matikan eksekusi PHP di dalam view
+        ]);
 
-        return $pdf->download($filename);
-    }
+    // Bersihkan nama file dari karakter aneh
+    $namaSiswa = Str::slug($catatan->siswa->nama_siswa, '_');
+    $filename = 'Laporan_Perkembangan_' . $namaSiswa . '_' . date('Y-m-d') . '.pdf';
+
+    return $pdf->download($filename);
+}
 
     // Helper function
     private function getFieldName($kategoriName)

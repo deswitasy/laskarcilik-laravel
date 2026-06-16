@@ -191,187 +191,310 @@ document.getElementById('foto').addEventListener('change', function(e) {
 
 @push('styles')
 <style>
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+
+/* =========================
+   FORM CONTAINER
+========================= */
+
+.form-container{
+    width:100%;
+    max-width:1000px;
+    margin:0 auto;
+
+    background:#ffffff;
+
+    border:1px solid #edf0f7;
+    border-radius:24px;
+
+    padding:28px;
+
+    box-shadow:
+        0 10px 30px rgba(15,23,42,.04);
 }
 
-.form-group-pair {
-    margin-bottom: 20px;
+/* =========================
+   FORM CARD
+========================= */
+
+.form-group,
+.form-group-pair,
+.section-foto{
+    background:#ffffff;
+
+    border:1px solid #eef2ff;
+    border-radius:18px;
+
+    padding:20px;
+
+    margin-bottom:20px;
+
+    transition:.2s ease;
 }
 
-.required {
-    color: red;
+.form-group:hover,
+.form-group-pair:hover,
+.section-foto:hover{
+    border-color:#dbe4ff;
 }
 
-.error-message {
-    color: red;
-    font-size: 12px;
-    display: block;
-    margin-top: 5px;
+/* =========================
+   GRID
+========================= */
+
+.form-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
 }
 
-.text-hint {
-    font-size: 12px;
-    color: #666;
-    display: block;
-    margin-top: 5px;
+/* =========================
+   SECTION FOTO
+========================= */
+
+.section-foto{
+    background:
+        linear-gradient(
+            180deg,
+            #fcfcff 0%,
+            #f8faff 100%
+        );
 }
 
-textarea {
-    resize: vertical;
-    min-height: 120px;
-    width: 100%;
+.section-foto h3{
+    margin-top:0;
+    margin-bottom:10px;
+
+    color:#2b3674;
 }
 
-.btn-cancel {
-    padding: 10px 20px;
-    background: #6c757d;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
+/* =========================
+   TEXT
+========================= */
+
+.required{
+    color:#ef4444;
 }
 
-.btn-cancel:hover {
-    background: #5a6268;
+.error-message{
+    color:#ef4444;
+    font-size:12px;
+
+    display:block;
+    margin-top:5px;
 }
 
-/* Styling untuk field yang error */
-.is-invalid {
-    border: 2px solid #dc3545 !important;
-    background-color: #fff5f5 !important;
+.text-hint{
+    font-size:12px;
+    color:#8b95b7;
+
+    display:block;
+    margin-top:5px;
 }
 
-/* Section Foto Styles */
-.section-foto {
-    background: #f8f9fa;
-    border: 2px solid #dee2e6;
-    border-radius: 8px;
-    padding: 20px;
-    margin: 30px 0;
+/* =========================
+   TEXTAREA
+========================= */
+
+textarea{
+    resize:vertical;
+    min-height:120px;
+    width:100%;
 }
 
-.section-foto h3 {
-    color: #275CB4;
-    margin-top: 0;
-    margin-bottom: 10px;
+/* =========================
+   INVALID
+========================= */
+
+.is-invalid{
+    border:2px solid #ef4444 !important;
+    background:#fff5f5 !important;
 }
 
-.section-foto p {
-    margin: 5px 0;
+/* =========================
+   PREVIEW
+========================= */
+
+.preview-container{
+    margin-top:20px;
+    padding-top:20px;
+
+    border-top:1px solid #e5e7eb;
 }
 
-/* Preview Container */
-.preview-container {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 2px solid #dee2e6;
+.preview-container h4{
+    color:#2b3674;
+    margin-bottom:15px;
 }
 
-.preview-container h4 {
-    color: #333;
-    margin-bottom: 15px;
+.preview-list{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+    gap:15px;
 }
 
-.preview-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 15px;
+.preview-item{
+    background:white;
+
+    border:1px solid #edf0f7;
+    border-radius:16px;
+
+    padding:10px;
+
+    text-align:center;
+
+    transition:.2s ease;
 }
 
-.preview-item {
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px;
-    text-align: center;
-    transition: transform 0.3s, box-shadow 0.3s;
+.preview-item:hover{
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 8px 20px rgba(99,102,241,.08);
 }
 
-.preview-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+.preview-item img{
+    width:100%;
+    height:100px;
+
+    object-fit:cover;
+
+    border-radius:10px;
+
+    margin-bottom:8px;
 }
 
-.preview-item img {
-    width: 100%;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 5px;
-    margin-bottom: 8px;
+.preview-item p{
+    font-size:12px;
+    color:#333;
+
+    margin:5px 0;
+
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+
+    font-weight:600;
 }
 
-.preview-item p {
-    font-size: 12px;
-    color: #333;
-    margin: 5px 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-weight: 600;
+.preview-item small{
+    font-size:11px;
+    color:#8b95b7;
 }
 
-.preview-item small {
-    font-size: 11px;
-    color: #666;
+/* =========================
+   ACTION BUTTONS
+========================= */
+
+.form-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:12px;
+
+    margin-top:30px;
 }
 
-/* Form Actions */
-.form-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 30px;
+/* =========================
+   BUTTON BATAL
+========================= */
+
+.btn-cancel{
+    height:42px;
+
+    padding:0 18px;
+
+    border-radius:12px;
+
+    background:#f3f4f6;
+    border:1px solid #e5e7eb;
+
+    color:#6b7280;
+
+    text-decoration:none;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:14px;
+    font-weight:600;
+
+    transition:.2s ease;
 }
 
-.btn-submit {
-    padding: 10px 20px;
-    background: #275CB4;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 600;
+.btn-cancel:hover{
+    background:#e5e7eb;
+    color:#374151;
 }
 
-.btn-submit:hover {
-    background: #1a4480;
+/* =========================
+   BUTTON SIMPAN
+========================= */
+
+.btn-submit{
+    height:42px;
+
+    padding:0 20px;
+
+    border-radius:12px;
+
+    background:#f0fdf4;
+    border:1px solid #dcfce7;
+
+    color:#22c55e;
+
+    font-size:14px;
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.2s ease;
 }
 
-/* Animasi Shake untuk field error */
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-    20%, 40%, 60%, 80% { transform: translateX(5px); }
+.btn-submit:hover{
+    background:#dcfce7;
+    color:#16a34a;
+
+    transform:translateY(-1px);
 }
 
-.animate-shake {
-    animation: shake 0.6s;
+/* =========================
+   SHAKE
+========================= */
+
+@keyframes shake{
+    0%,100%{transform:translateX(0);}
+    20%,60%{transform:translateX(-5px);}
+    40%,80%{transform:translateX(5px);}
 }
 
-.content-container {
-    display: flex;
-    justify-content: center;
-    padding: 20px;
+.animate-shake{
+    animation:shake .5s;
 }
 
-.form-container {
-    width: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
-}
+/* =========================
+   MOBILE
+========================= */
 
-@media (max-width: 768px) {
-    .form-row {
-        grid-template-columns: 1fr;
+@media (max-width:768px){
+
+    .form-row{
+        grid-template-columns:1fr;
     }
-    
-    .preview-list {
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+
+    .preview-list{
+        grid-template-columns:
+            repeat(auto-fill,minmax(100px,1fr));
+    }
+
+    .form-actions{
+        flex-direction:column;
+    }
+
+    .btn-cancel,
+    .btn-submit{
+        width:100%;
     }
 }
+
 </style>
 @endpush

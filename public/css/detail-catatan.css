@@ -1,0 +1,614 @@
+/* ============================================
+   DETAIL CATATAN — Modal Preview
+   Laskar Cilik · guru/catatan
+   ============================================ */
+
+/* ---- OVERLAY WRAPPER ---- */
+#docOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- BACKDROP ---- */
+#docBackdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 20, 28, 0.40);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+/* ---- MODAL ---- */
+#docModal {
+  position: relative;
+  z-index: 1;
+  width: 680px;
+  max-width: calc(100vw - 48px);
+  height: calc(100vh - 80px);
+  max-height: 800px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,.22), 0 2px 8px rgba(0,0,0,.12);
+  transform: scale(0.96) translateY(12px);
+  opacity: 0;
+  transition: transform .28s cubic-bezier(.4,0,.2,1), opacity .24s ease;
+}
+
+/* ---- TOOLBAR ---- */
+#docToolbar {
+  flex-shrink: 0;
+  height: 50px;
+  background: #3A3B42;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  gap: 12px;
+}
+
+#docBtnClose {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 6px;
+  background: rgba(255,255,255,.10);
+  color: rgba(255,255,255,.85);
+  font-size: 12.5px;
+  font-weight: 600;
+  border: 1px solid rgba(255,255,255,.14);
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: background .18s;
+}
+
+#docBtnClose:hover {
+  background: rgba(255,255,255,.20);
+  color: #fff;
+}
+
+#docModalNama {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,.45);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+#docModalNama i {
+  color: rgba(255,255,255,.3);
+}
+
+#docBtnPrint {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 16px;
+  border-radius: 6px;
+  background: #5B50C8;
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-decoration: none;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  box-shadow: 0 3px 10px rgba(91,80,200,.35);
+  transition: background .18s;
+}
+
+#docBtnPrint:hover {
+  background: #4842A8;
+  color: #fff;
+}
+
+/* ---- SCROLL AREA ---- */
+#docScrollArea {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #E8E9EE;
+  padding: 28px 20px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,.18) transparent;
+}
+
+#docScrollArea::-webkit-scrollbar {
+  width: 5px;
+}
+
+#docScrollArea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#docScrollArea::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,.16);
+  border-radius: 3px;
+}
+
+#docScrollArea::-webkit-scrollbar-thumb:hover {
+  background: rgba(0,0,0,.26);
+}
+
+/* ---- LOADING ---- */
+#docLoading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-top: 80px;
+  color: rgba(0,0,0,.4);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+}
+
+#docSpinner {
+  width: 30px;
+  height: 30px;
+  border: 2.5px solid rgba(0,0,0,.1);
+  border-top-color: #5B50C8;
+  border-radius: 50%;
+  animation: docSpin .7s linear infinite;
+}
+
+@keyframes docSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---- PAPER WRAP ---- */
+#docPaperWrap {
+  width: 100%;
+  max-width: 620px;
+}
+
+#docPaper {
+  width: 100%;
+  background: #fff;
+  padding: 52px 58px 60px;
+  box-shadow:
+    0 1px 4px rgba(0,0,0,.12),
+    0 8px 28px rgba(0,0,0,.14);
+  font-family: 'Georgia', 'Times New Roman', serif;
+  color: #1A1A2E;
+}
+
+/* ---- FOTO ZOOM OVERLAY ---- */
+#fotoZoomOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.88);
+  z-index: 10000;
+  justify-content: center;
+  align-items: center;
+  cursor: zoom-out;
+}
+
+#fotoZoomImg {
+  max-width: 90%;
+  max-height: 88vh;
+  border-radius: 4px;
+  box-shadow: 0 16px 60px rgba(0,0,0,.6);
+}
+
+/* ============================================
+   KONTEN DOKUMEN (paper-doc-content)
+   ============================================ */
+.paper-doc-content { width: 100%; }
+
+.kop {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid #1A1A2E;
+}
+
+.kop-logo {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  flex-shrink: 0;
+  border-radius: 8px;
+}
+
+.kop-teks { flex: 1; }
+
+.kop-nama {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  color: #1A1A2E;
+  margin-bottom: 3px;
+}
+
+.kop-alamat {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 11px;
+  color: #777;
+  line-height: 1.6;
+}
+
+.kop-right {
+  text-align: right;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  flex-shrink: 0;
+}
+
+.kop-tahun-ajaran {
+  font-size: 10.5px;
+  color: #999;
+  margin-bottom: 4px;
+}
+
+.kop-badge-ta {
+  display: inline-block;
+  padding: 3px 11px;
+  background: #EEF0FF;
+  color: #3A3570;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.kop-divider-warna {
+  height: 3px;
+  background: linear-gradient(90deg,
+    #C5C3F0 0%, #F9B8D0 40%, #FFD99A 70%, #A8EDDA 100%);
+  border-radius: 3px;
+  margin-top: 7px;
+}
+
+.judul-dokumen {
+  text-align: center;
+  margin: 22px 0 20px;
+}
+
+.judul-dokumen h2 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #1A1A2E;
+}
+
+.judul-garis {
+  width: 48px;
+  height: 2px;
+  background: #C5C3F0;
+  border-radius: 2px;
+  margin: 7px auto 0;
+}
+
+.tabel-identitas {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 24px;
+  font-size: 13px;
+}
+
+.tabel-identitas td {
+  padding: 4.5px 0;
+  vertical-align: top;
+  line-height: 1.6;
+}
+
+.tabel-identitas .label-col {
+  width: 150px;
+  color: #666;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+}
+
+.tabel-identitas .titik-col {
+  width: 16px;
+  color: #BBB;
+}
+
+.tabel-identitas .nilai-col {
+  color: #1A1A2E;
+}
+
+.section-heading {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  color: #5B50C8;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #E2E0F7;
+  margin: 0 0 12px;
+}
+
+.aspek-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.aspek-item {
+  border-left: 3px solid #C5C3F0;
+  padding: 11px 14px;
+  background: #FAFAFD;
+}
+
+.aspek-nama {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  color: #3A3570;
+  margin-bottom: 6px;
+}
+
+.aspek-deskripsi {
+  font-size: 13px;
+  line-height: 1.85;
+  color: #2D2D3A;
+  white-space: pre-line;
+}
+
+.divider-dashed {
+  border: none;
+  border-top: 1px dashed #D8D8EA;
+  margin: 22px 0;
+}
+
+.foto-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.foto-item { border: 1px solid #E2E0F7; }
+
+.foto-item img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  display: block;
+  cursor: zoom-in;
+  transition: opacity .18s;
+}
+
+.foto-item img:hover { opacity: .88; }
+
+.foto-caption {
+  padding: 5px 8px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 10.5px;
+  color: #888;
+  border-top: 1px solid #E2E0F7;
+  background: #FAFAFD;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.foto-ket {
+  display: block;
+  font-size: 10px;
+  color: #AAA;
+  font-style: italic;
+}
+
+.ttd-area {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 28px;
+}
+
+.ttd-block { text-align: center; width: 160px; }
+
+.ttd-tempat-tanggal {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 11.5px;
+  color: #555;
+  margin-bottom: 44px;
+}
+
+.ttd-garis {
+  border-top: 1px solid #1A1A2E;
+  margin-bottom: 4px;
+}
+
+.ttd-nama {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #1A1A2E;
+}
+
+.ttd-jabatan {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 11px;
+  color: #888;
+  font-style: italic;
+}
+
+.paper-footer {
+  margin-top: 32px;
+  padding-top: 10px;
+  border-top: 1px solid #E2E0F7;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.paper-footer-kiri {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 9.5px;
+  color: #C0C0C8;
+  line-height: 1.7;
+}
+
+.paper-footer-kanan {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 9.5px;
+  color: #C8C8D0;
+  font-style: italic;
+}
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 720px) {
+  #docModal {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0;
+  }
+  #docPaper { padding: 30px 22px 40px; }
+  #docScrollArea { padding: 18px 10px 40px; }
+  .foto-grid { grid-template-columns: repeat(2, 1fr); }
+  #docToolbar { padding: 0 12px; }
+  #docModalNama { display: none; }
+}
+
+/* ============================================
+   PRINT / SAVE PDF
+   Agar hasil cetak konsisten dengan preview modal
+   ============================================ */
+@media print {
+
+  /* Sembunyikan semua kecuali konten dokumen */
+  body > *:not(#docOverlay),
+  .app-wrapper,
+  .main-content,
+  .header,
+  .sidebar-wrapper,
+  .content-container,
+  #docOverlay,
+  #docToolbar,
+  #docBackdrop,
+  #docScrollArea > #docLoading,
+  #fotoZoomOverlay {
+    display: none !important;
+  }
+
+  /* Reset body untuk cetak */
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    font-size: 12pt;
+    color: #1A1A2E;
+  }
+
+  /* Tampilkan hanya kertas dokumen */
+  #docPaper {
+    display: block !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 20mm 20mm 24mm 20mm !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  /* Ukuran kertas A4 portrait */
+  @page {
+    size: A4 portrait;
+    margin: 16mm 18mm 20mm 18mm;
+  }
+
+  /* Pastikan paper-doc-content visible */
+  .paper-doc-content {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  /* Kop surat */
+  .kop {
+    display: flex !important;
+    align-items: flex-start !important;
+    border-bottom: 2px solid #1A1A2E !important;
+    padding-bottom: 12px !important;
+  }
+
+  /* Gradient tidak muncul saat print — fallback warna solid */
+  .kop-divider-warna {
+    background: #C5C3F0 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Paksa warna background aspek-item tercetak */
+  .aspek-item {
+    background: #FAFAFD !important;
+    border-left: 3px solid #C5C3F0 !important;
+    page-break-inside: avoid !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .kop-badge-ta {
+    background: #EEF0FF !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Foto grid: 3 kolom tetap */
+  .foto-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+    page-break-inside: avoid !important;
+  }
+
+  .foto-item {
+    page-break-inside: avoid !important;
+    border: 1px solid #E2E0F7 !important;
+  }
+
+  .foto-item img {
+    width: 100% !important;
+    height: 100px !important;
+    object-fit: cover !important;
+  }
+
+  /* Tabel identitas tidak terpotong */
+  .tabel-identitas {
+    width: 100% !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Tanda tangan */
+  .ttd-area {
+    page-break-inside: avoid !important;
+    margin-top: 24px !important;
+  }
+
+  /* Footer dokumen */
+  .paper-footer {
+    page-break-inside: avoid !important;
+    margin-top: 20px !important;
+  }
+
+  /* Sembunyikan elemen interaktif */
+  .doc-btn-back,
+  .doc-btn-print,
+  button,
+  .btn-open-preview {
+    display: none !important;
+  }
+}
