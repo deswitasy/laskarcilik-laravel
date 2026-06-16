@@ -2,7 +2,9 @@
 
 @section('title', 'Dashboard Guru')
 @section('page-title', 'Dashboard Guru')
-
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/detail-catatan.css') }}">
+@endpush
 @section('content')
 
 <!-- ================= STATISTICS CARDS ================= -->
@@ -117,9 +119,13 @@
                     <td>{{ \Carbon\Carbon::parse($catatan->tanggal_catat)->format('d-m-Y') }}</td>
                     <td>
                         <div class="action-buttons">
-                            <a href="{{ route('guru.catatan.show', $catatan->id_catatan) }}" class="btn btn-detail">
+                            <button type="button"
+                                class="btn btn-detail btn-open-preview"
+                                data-url="{{ route('guru.catatan.show', $catatan->id_catatan) }}"
+                                data-nama="{{ $catatan->siswa->nama_siswa }}"
+                                data-pdf="{{ route('guru.catatan.pdf', $catatan->id_catatan) }}">
                                 <i class="fa-solid fa-eye"></i> Detail
-                            </a>
+                            </button>
                             <a href="{{ route('guru.catatan.edit', $catatan->id_catatan) }}" class="btn btn-edit">
                                 <i class="fa-solid fa-pen-to-square"></i> Edit
                             </a>
@@ -308,5 +314,161 @@ new Chart(document.getElementById('chartKategori'), {
         datasets: [{ data: kategoriData, backgroundColor: ['#94D9FF', '#F09AA8', '#C69EF1', '#C9F99C'] }]
     }
 });
+
+// ============================================
+// MODAL PREVIEW DOKUMEN (sama seperti di index.blade.php)
+// ============================================
+(function () {
+    const existing = document.getElementById('docOverlay');
+    if (existing) existing.remove();
+    const existingZoom = document.getElementById('fotoZoomOverlay');
+    if (existingZoom) existingZoom.remove();
+
+    document.body.insertAdjacentHTML('beforeend', `
+        <div id="docOverlay">
+            <div id="docBackdrop"></div>
+            <div id="docModal">
+                <div id="docToolbar">
+                    <button id="docBtnClose">
+                        <i class="fa-solid fa-xmark"></i> Tutup
+                    </button>
+                    <span id="docModalNama">
+                        <i class="fa-solid fa-file-lines"></i>
+                        Pratinjau Dokumen
+                    </span>
+                    <a id="docBtnPrint" href="#">
+                        <i class="fa-solid fa-download"></i> Unduh PDF
+                    </a>
+                </div>
+                <div id="docScrollArea">
+                    <div id="docLoading">
+                        <div id="docSpinner"></div>
+                        <p>Memuat dokumen...</p>
+                    </div>
+                    <div id="docPaperWrap">
+                        <div id="docPaper"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="fotoZoomOverlay">
+            <img id="fotoZoomImg" src="" alt="">
+        </div>
+    `);
+
+    document.getElementById('docPaperWrap').style.display = 'none';
+
+    const overlay    = document.getElementById('docOverlay');
+    const modal      = document.getElementById('docModal');
+    const backdrop   = document.getElementById('docBackdrop');
+    const paper      = document.getElementById('docPaper');
+    const paperWrap  = document.getElementById('docPaperWrap');
+    const loading    = document.getElementById('docLoading');
+    const btnClose   = document.getElementById('docBtnClose');
+    const btnPrint   = document.getElementById('docBtnPrint');
+    const namaLabel  = document.getElementById('docModalNama');
+    const scrollArea = document.getElementById('docScrollArea');
+    const zoomBox    = document.getElementById('fotoZoomOverlay');
+    const zoomImg    = document.getElementById('fotoZoomImg');
+
+    document.querySelectorAll('.btn-open-preview').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const url    = this.dataset.url;
+            const nama   = this.dataset.nama || 'Pratinjau Dokumen';
+            const pdfUrl = this.dataset.pdf || '#';
+
+            paper.innerHTML         = '';
+            paperWrap.style.display = 'none';
+            loading.style.display   = 'flex';
+            scrollArea.scrollTop    = 0;
+            namaLabel.innerHTML     = `<i class="fa-solid fa-file-lines"></i> ${nama}`;
+            btnPrint.setAttribute('href', pdfUrl);
+
+            overlay.style.display        = 'flex';
+            document.body.style.overflow = 'hidden';
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    modal.style.transform = 'scale(1) translateY(0)';
+                    modal.style.opacity   = '1';
+                });
+            });
+
+            fetch(url + '?_fragment=1', {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(r => {
+                if (!r.ok) throw new Error('HTTP ' + r.status);
+                return r.text();
+            })
+            .then(html => {
+                const parser = new DOMParser();
+                const doc    = parser.parseFromString(html, 'text/html');
+                const konten = doc.querySelector('.paper-doc-content');
+
+                paper.innerHTML = '';
+                paper.appendChild(konten ? konten.cloneNode(true) : (() => {
+                    const d = document.createElement('div');
+                    d.innerHTML = html;
+                    return d;
+                })());
+
+                loading.style.display   = 'none';
+                paperWrap.style.display = 'block';
+
+                paper.querySelectorAll('.foto-item img').forEach(img => {
+                    img.addEventListener('click', function () {
+                        zoomImg.src           = this.src;
+                        zoomBox.style.display = 'flex';
+                    });
+                });
+            })
+            .catch(err => {
+                loading.style.display   = 'none';
+                paper.innerHTML         = `
+                    <div class="doc-error">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        Gagal memuat dokumen.<br>
+                        <small>${err.message}</small>
+                    </div>`;
+                paperWrap.style.display = 'block';
+                console.error('Doc preview error:', err);
+            });
+        });
+    });
+
+    function tutup() {
+        modal.style.transform = 'scale(0.96) translateY(12px)';
+        modal.style.opacity   = '0';
+        setTimeout(() => {
+            overlay.style.display        = 'none';
+            document.body.style.overflow = '';
+            paper.innerHTML              = '';
+            paperWrap.style.display      = 'none';
+            loading.style.display        = 'flex';
+        }, 280);
+    }
+
+    btnClose.addEventListener('click', tutup);
+    backdrop.addEventListener('click', tutup);
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            if (zoomBox.style.display === 'flex') {
+                zoomBox.style.display = 'none';
+                zoomImg.src           = '';
+            } else if (overlay.style.display === 'flex') {
+                tutup();
+            }
+        }
+    });
+
+    zoomBox.addEventListener('click', function () {
+        this.style.display = 'none';
+        zoomImg.src        = '';
+    });
+})();
 </script>
+
+
 @endpush
